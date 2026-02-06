@@ -1,0 +1,37 @@
+
+addr=0x1e
+
+while true; do
+	xl_hex=$(i2cget -y 1 $addr 0x28)
+	xh_hex=$(i2cget -y 1 $addr 0x29)
+	
+	xl=$((16#${xl_hex#0x}))
+	xh=$((16#${xh_hex#0x}))
+	
+	x=$(( (xh << 8) | xl))
+
+	if(( x >= 32768 )); then x=$((x - 65536 )); fi
+	
+	yl_hex=$(i2cget -y 1 $addr 0x2A)
+	yh_hex=$(i2cget -y 1 $addr 0x2B)
+
+	if(( y >= 32768 )); then y=$((y - 65536 )); fi
+
+	yl=$((16#${yl_hex#0x}))
+	yh=$((16#${yh_hex#0x}))
+
+	if(( z >= 32768 )); then z=$((z - 65536 )); fi
+
+	y=$(( (yh << 8) | yl))
+
+	zl_hex=$(i2cget -y 1 $addr 0x2C)
+	zh_hex=$(i2cget -y 1 $addr 0x2D)
+
+	zh=$((16#${zl_hex#0x}))
+	zh=$((16#${zh_hex#0x}))
+
+	z=$(( (zh << 8) | zl ))
+
+	printf "%s X:%6d Y:%6d Z:%6d\n" "$(date '+%H:%M:%S')" "$x" "$y" "$z"
+	sleep 0.2
+done 
