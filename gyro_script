@@ -15,22 +15,21 @@ while true; do
 	yl_hex=$(i2cget -y 1 $addr 0x24)
 	yh_hex=$(i2cget -y 1 $addr 0x25)
 
-	if(( y >= (1 << 15) )); then y=$((y - (1 << 16) )); fi
 
 	yl=$((16#${yl_hex#0x}))
 	yh=$((16#${yh_hex#0x}))
 
-	if(( z >= (1 << 15) )); then z=$((z - (1 << 16) )); fi
-
 	y=$(( (yh << 8) | yl))
+	if(( y >= (1 << 15) )); then y=$((y - (1 << 16) )); fi
 
 	zl_hex=$(i2cget -y 1 $addr 0x26)
 	zh_hex=$(i2cget -y 1 $addr 0x27)
 
-	zh=$((16#${zl_hex#0x}))
+	zl=$((16#${zl_hex#0x}))
 	zh=$((16#${zh_hex#0x}))
 
 	z=$(( (zh << 8) | zl ))
+	if(( z >= (1 << 15) )); then z=$((z - (1 << 16) )); fi
 
 	printf "%s X:%6d Y:%6d Z:%6d\n" "$(date '+%H:%M:%S')" "$x" "$y" "$z"
 	sleep 0.2
